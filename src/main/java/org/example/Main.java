@@ -1,7 +1,10 @@
 package org.example;
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.Collections;
 
 public class Main {
     public static void task1() {
@@ -135,6 +138,7 @@ public class Main {
 
     public static void task11() {
         Scanner in = new Scanner(System.in);
+
         System.out.print("Введите произвольную строку: ");
         String str = in.nextLine();
 
@@ -144,6 +148,154 @@ public class Main {
                 System.out.println("Символ: " + ch + ", Юникод: U+" + Integer.toHexString(ch).toUpperCase());
             }
         }
+    }
+
+    public static void task13() {
+        ArrayList<Integer> numbers = new ArrayList<>();
+        for (int i = 1; i <= 49; i++) {
+            numbers.add(i);
+        }
+
+        ArrayList<Integer> lotteryCombination = new ArrayList<>();
+        Random random = new Random();
+
+        for (int i = 0; i < 6; i++) {
+            int randomIndex = random.nextInt(numbers.size());
+            lotteryCombination.add(numbers.remove(randomIndex));
+        }
+
+        Collections.sort(lotteryCombination);
+        System.out.println("Лотерейная комбинация: " + lotteryCombination);
+    }
+
+    public static boolean isMagicSquare(int[][] matrix) {
+        int n = matrix.length;
+
+        for (int[] row : matrix) {
+            if (row.length != n) {
+                return false;
+            }
+        }
+
+        int sum = 0;
+        for (int num : matrix[0]) {
+            sum += num;
+        }
+
+        for (int i = 1; i < n; i++) {
+            int rowSum = 0;
+            for (int num : matrix[i]) {
+                rowSum += num;
+            }
+            if (rowSum != sum) {
+                return false;
+            }
+        }
+
+        for (int j = 0; j < n; j++) {
+            int colSum = 0;
+            for (int i = 0; i < n; i++) {
+                colSum += matrix[i][j];
+            }
+            if (colSum != sum) {
+                return false;
+            }
+        }
+
+        int diagSum1 = 0;
+        for (int i = 0; i < n; i++) {
+            diagSum1 += matrix[i][i];
+        }
+        if (diagSum1 != sum) {
+            return false;
+        }
+
+        int diagSum2 = 0;
+        for (int i = 0; i < n; i++) {
+            diagSum2 += matrix[i][n - 1 - i];
+        }
+        if (diagSum2 != sum) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public static void task14() {
+        Scanner scanner = new Scanner(System.in);
+        List<int[]> rows = new ArrayList<>();
+
+        System.out.println("Введите квадратную матрицу:");
+        while (true) {
+            String line = scanner.nextLine().trim();
+            if (line.isEmpty()) {
+                break;
+            }
+            String[] parts = line.split("\\s+");
+            int[] row = new int[parts.length];
+            for (int i = 0; i < parts.length; i++) {
+                row[i] = Integer.parseInt(parts[i]);
+            }
+            rows.add(row);
+        }
+
+        int size = rows.size();
+        int[][] matrix = new int[size][];
+        for (int i = 0; i < size; i++) {
+            matrix[i] = rows.get(i);
+        }
+
+        if (isMagicSquare(matrix)) {
+            System.out.println("Массив является магическим квадратом.");
+        } else {
+            System.out.println("Массив не является магическим квадратом.");
+        }
+    }
+
+    public static ArrayList<ArrayList<Integer>> generatePascalTriangle(int n) {
+        ArrayList<ArrayList<Integer>> triangle = new ArrayList<>();
+
+        for (int i = 0; i < n; i++) {
+            ArrayList<Integer> row = new ArrayList<>();
+
+            row.add(1);
+
+            if (i > 0) {
+                ArrayList<Integer> prevRow = triangle.get(i - 1);
+                for (int j = 1; j < i; j++) {
+                    row.add(prevRow.get(j - 1) + prevRow.get(j));
+                }
+                row.add(1);
+            }
+
+            triangle.add(row);
+        }
+
+        return triangle;
+    }
+
+    public static void task15() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Введите величину n для треугольника Паскаля: ");
+        int n = scanner.nextInt();
+
+        ArrayList<ArrayList<Integer>> pascalTriangle = generatePascalTriangle(n);
+
+        System.out.println("Треугольник Паскаля до величины " + n + ":");
+        for (ArrayList<Integer> row : pascalTriangle) {
+            for (int num : row) {
+                System.out.print(num + " ");
+            }
+            System.out.println();
+        }
+    }
+
+    public static double average(double v1, double... values) {
+        double sum = v1;
+        for (double v : values) {
+            sum += v;
+        }
+        return values.length == 0 ? sum : sum / (values.length + 1);
     }
 
     public static void main(String[] args) {
@@ -188,6 +340,18 @@ public class Main {
                     break;
                 case 11:
                     task11();
+                    break;
+                case 13:
+                    task13();
+                    break;
+                case 14:
+                    task14();
+                    break;
+                case 15:
+                    task15();
+                    break;
+                case 16:
+                    System.out.println("Среднее чисел 1, 2, 3, 4, 5: " + average(1, 2, 3, 4, 5));
                     break;
                 default:
                     System.out.println("Неверно!");
