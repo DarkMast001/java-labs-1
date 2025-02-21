@@ -33,6 +33,17 @@ public class Main {
         System.out.println("Нормализация 'Math.floorMod': " + Math.floorMod(degree, 360));
     }
 
+
+//    Метод для поиска двух максимальных чисел
+    public static int findMax(int... values) {
+        int maxNumber = Integer.MIN_VALUE;
+        for (int i = 0; i < values.length; i++) {
+            if (values[i] > maxNumber)
+                maxNumber = values[i];
+        }
+        return maxNumber;
+    }
+
     public static void task3() {
         System.out.print("Введите 3 целых числа: ");
         Scanner in = new Scanner(System.in);
@@ -48,12 +59,17 @@ public class Main {
             System.out.println("Самое большое число (условный оператор): " + c);
 
         System.out.println("Самое большое число (Math.max()): " + Math.max(Math.max(a, b), c));
+
+//        Создать метод который принимает неограниченное количество чисел и среди всех ищет большее
     }
 
     public static void task4() {
         System.out.println("Наименьшее положительное значение double: " + Math.nextUp(0.0));
 
         System.out.println("Наибольшее положительное значение double: " + Double.MAX_VALUE);
+
+        System.out.println(Math.nextUp(Double.MAX_VALUE) > Double.MAX_VALUE);
+        System.out.println(Math.nextUp(Double.MAX_VALUE));
     }
 
     public static void task5() {
@@ -279,12 +295,17 @@ public class Main {
         System.out.print("Введите величину n для треугольника Паскаля: ");
         int n = scanner.nextInt();
 
-        ArrayList<ArrayList<Integer>> pascalTriangle = generatePascalTriangle(n);
+        ArrayList<ArrayList<Integer>> triangle = generatePascalTriangle(n);
 
-        System.out.println("Треугольник Паскаля до величины " + n + ":");
-        for (ArrayList<Integer> row : pascalTriangle) {
-            for (int num : row) {
-                System.out.print(num + " ");
+        int height = triangle.size();
+
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < height - i - 1; j++) {
+                System.out.print("  ");
+            }
+
+            for (int num : triangle.get(i)) {
+                System.out.printf(" %4d", num); // Форматируем вывод числа
             }
             System.out.println();
         }
@@ -298,11 +319,77 @@ public class Main {
         return values.length == 0 ? sum : sum / (values.length + 1);
     }
 
+//    Есть строка. В ней надо найти подстроку максимальной длины палиндром и вывести её.
+//    ajgkfldgabcderedcba
+//    zxxzzxcxzasd
+
+    private static int expandAroundCenter(String s, int left, int right) {
+        while (left >= 0 && right < s.length() && s.charAt(left) == s.charAt(right)) {
+            left--;
+            right++;
+        }
+        return right - left - 1;
+    }
+
+    public static String isContainPalindrome(String str) {
+        int start = 0, end = 0;
+
+        for (int i = 0; i < str.length(); i++) {
+            int len1 = expandAroundCenter(str, i, i);
+            int len2 = expandAroundCenter(str, i, i + 1);
+            int len = Math.max(len1, len2);
+            if (len > end - start) {
+                start = i - (len - 1) / 2;
+                end = i + len / 2;
+            }
+        }
+
+        return str.substring(start, end + 1);
+    }
+
+    public static boolean isPalindrom(String word) {
+        boolean flag = false;
+        int length = word.length();
+        int border = (length % 2 == 0) ? length / 2 : length / 2 + 1;
+        int counter = 0;
+        for (int i = 0; i < border; i++) {
+            if (word.charAt(i) == word.charAt(length - 1 - i)) {
+                counter++;
+            }
+        }
+        if (length % 2 == 0 && counter == length / 2){
+            flag = true;
+        }
+        else if (length % 2 != 0 && counter == length / 2 + 1){
+            flag = true;
+        }
+
+        return flag;
+    }
+
+    public static String findMaxPalindrom(String str) {
+        String maxWord = "";
+        int maxLength = -1;
+
+        str = str.trim();
+        String[] newStr = str.split("\\s+");
+        for (String word : newStr) {
+            if (isPalindrom(word)) {
+                if (word.length() > maxLength) {
+                    maxWord = word;
+                    maxLength = word.length();
+                }
+            }
+        }
+
+        return maxWord;
+    }
+
     public static void main(String[] args) {
         int number = 1;
 
         while(number != 0) {
-            System.out.print("Введите номер задачи 1 - 16 (0 - для выхода): ");
+            System.out.print("Введите номер задачи 1 - 18 (0 - для выхода): ");
             Scanner in = new Scanner(System.in);
             number = in.nextInt();
             switch (number) {
@@ -352,6 +439,15 @@ public class Main {
                     break;
                 case 16:
                     System.out.println("Среднее чисел 1, 2, 3, 4, 5: " + average(1, 2, 3, 4, 5));
+                    break;
+                case 17:
+                    // ajgkfldgabcderedcba
+                    Scanner input = new Scanner(System.in);
+                    String str = input.nextLine();
+                    System.out.println(isContainPalindrome(str));
+                    break;
+                case 18:
+                    System.out.println("Максимальное из чисел 2 7 9 12 8 16 32 22 15 30: " + findMax(2, 7, 9, 12, 8, 16, 32, 22, 15, 30));
                     break;
                 default:
                     System.out.println("Неверно!");
