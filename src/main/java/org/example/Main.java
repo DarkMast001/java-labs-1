@@ -35,13 +35,25 @@ public class Main {
 
 
 //    Метод для поиска двух максимальных чисел
-    public static int findMax(int... values) {
-        int maxNumber = Integer.MIN_VALUE;
-        for (int i = 0; i < values.length; i++) {
-            if (values[i] > maxNumber)
-                maxNumber = values[i];
+    public static int[] findMax(int... values) {
+        if (values.length < 2) {
+            return null;
         }
-        return maxNumber;
+
+        int max1 = Integer.MIN_VALUE;
+        int max2 = Integer.MIN_VALUE;
+
+        for (int i = 0; i < values.length; i++) {
+            if (values[i] > max1) {
+                max2 = max1;
+                max1 = values[i];
+            }
+            else if (values[i] > max2) {
+                max2 = values[i];
+            }
+        }
+
+        return new int[] {max1, max2};
     }
 
     public static void task3() {
@@ -268,6 +280,26 @@ public class Main {
         }
     }
 
+    public static long factorial(int n) {
+        if (n == 0 || n == 1) {
+            return 1;
+        }
+        long result = 1;
+        for (int i = 2; i <= n; i++) {
+            result *= i;
+        }
+        return result;
+    }
+
+    public static long binomialCoefficient(int n, int k) {
+        return factorial(n) / (factorial(k) * factorial(n - k));
+    }
+
+    public static long findMaxInTriangle(int n) {
+        int k = n / 2;
+        return binomialCoefficient(n, k);
+    }
+
     public static ArrayList<ArrayList<Integer>> generatePascalTriangle(int n) {
         ArrayList<ArrayList<Integer>> triangle = new ArrayList<>();
 
@@ -295,17 +327,18 @@ public class Main {
         System.out.print("Введите величину n для треугольника Паскаля: ");
         int n = scanner.nextInt();
 
-        ArrayList<ArrayList<Integer>> triangle = generatePascalTriangle(n);
+        long maxNumber = findMaxInTriangle(n - 1);
+        int maxWidth = String.valueOf(maxNumber).length();
 
-        int height = triangle.size();
-
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < height - i - 1; j++) {
-                System.out.print("  ");
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n - i - 1; j++) {
+                System.out.print(" ".repeat(maxWidth));
             }
 
-            for (int num : triangle.get(i)) {
-                System.out.printf(" %4d", num); // Форматируем вывод числа
+            for (int k = 0; k <= i; k++) {
+                long number = binomialCoefficient(i, k);
+                String formattedNumber = String.format("%" + maxWidth + "d", number);
+                System.out.print(formattedNumber + " ".repeat(maxWidth));
             }
             System.out.println();
         }
@@ -334,6 +367,8 @@ public class Main {
     public static String isContainPalindrome(String str) {
         int start = 0, end = 0;
 
+        if ("".equals(str))
+            return "";
         for (int i = 0; i < str.length(); i++) {
             int len1 = expandAroundCenter(str, i, i);
             int len2 = expandAroundCenter(str, i, i + 1);
@@ -447,7 +482,9 @@ public class Main {
                     System.out.println(isContainPalindrome(str));
                     break;
                 case 18:
-                    System.out.println("Максимальное из чисел 2 7 9 12 8 16 32 22 15 30: " + findMax(2, 7, 9, 12, 8, 16, 32, 22, 15, 30));
+                    System.out.println("Максимальное из чисел 2 7 9 12 8 16 32 22 15 30: ");
+                    int[] result = findMax(1, 1, 1, 1, 2, 2);
+                    System.out.println("Max1: " + result[0] + ", Max2: " + result[1]);
                     break;
                 default:
                     System.out.println("Неверно!");
